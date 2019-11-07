@@ -320,7 +320,8 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
                 resClient.takeScreenShot(new RESScreenShotListener() {
                     @Override
                     public void onScreenShotResult(Bitmap bitmap) {
-                        File f = new File("/sdcard/" + System.currentTimeMillis() + "_libres.png");
+                        final String filename = "/sdcard/" + System.currentTimeMillis() + "_libres.png";
+                        File f = new File(filename);
                         try {
                             if (!f.exists()) {
                                 f.createNewFile();
@@ -328,6 +329,12 @@ public class BaseStreamingActivity extends AppCompatActivity implements RESConne
                             OutputStream outputStream = new FileOutputStream(f);
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
                             outputStream.close();
+                            mainHander.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "take picture success: " + filename, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
